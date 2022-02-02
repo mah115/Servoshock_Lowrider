@@ -74,11 +74,6 @@ PROGRAM_STATE currentProgram = NO_OVERRIDE; //this indicates which program to ru
 uint32_t programTimer = 0;  //this keeps track of how many loops since the start of a program override we've gone though
 
 
-
-//test variables
-int servoDirection = 1;
-unsigned int servo_uS = 1000;
-
 void setup() {
 	//initialize SPI:
   SPI.begin();
