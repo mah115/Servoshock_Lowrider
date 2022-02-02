@@ -139,10 +139,14 @@ void RelinquishControl(void)
  * 		time2: servo move end time
  * 		pulseWidth2: servo pulse width at end time
  ***/
-void ServoInterpolate( uint16_t *channel, uint32_t currentTime, uint32_t time1, uint16_t pulseWidth1, uint32_t time2, uint16_t pulseWidth2 ) {
-	if (currentTime < time1 || currentTime > time2 || time1 > time2) return 0;  //return 0 if time is out of bounds
+int ServoInterpolate( uint16_t *channel, uint32_t currentTime, uint32_t time1, uint16_t pulseWidth1, uint32_t time2, uint16_t pulseWidth2 ) {
+	if (currentTime < time1 || currentTime > time2 || time1 > time2)
+	{
+		return 0; //return 0 if time is out of bounds
+	}
 	//if not out of bounds, interpolate and write channel PWM register
 	*channel = (pulseWidth1*(time2-currentTime) + pulseWidth2*(currentTime-time1))/(time2-time1);
+	return 1; //success
 }
 
 void loop() {
@@ -180,7 +184,7 @@ void loop() {
 			Servoshock1.outPacket.overrideLStickY = 1;
 			Servoshock1.outPacket.overrideRStickX = 1;
 			Servoshock1.outPacket.overrideRStickY = 1;
-			ServoInterpolate(&Servoshock1.outPacket.lStickX_uS, programTimer, 0, 1000, 100, 2000);  //need to pass by reference (use the '&' before the variable)
+			ServoInterpolate(&Servoshock1.outPacket.lStickX_uS, programTimer,   0, 1000, 100, 2000);  //need to pass by reference (use the '&' before the variable)
 			ServoInterpolate(&Servoshock1.outPacket.lStickY_uS, programTimer, 100, 1000, 200, 2000);
 			ServoInterpolate(&Servoshock1.outPacket.rStickX_uS, programTimer, 200, 1000, 300, 2000);
 			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 300, 1000, 400, 2000);
