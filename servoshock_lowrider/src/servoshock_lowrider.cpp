@@ -197,6 +197,6 @@ void loop() {
 	}
 
 	programTimer ++;
-	delay(20);
+	delay(10);
 }
 
