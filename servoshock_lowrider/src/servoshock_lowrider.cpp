@@ -56,10 +56,10 @@ The basic structure of the program is:
 
 //add new program to list here, can do a fine/replace to rename
 typedef enum {
-	NO_OVERRIDE = 0,
+	STANDBY = 0,
 	PROG_1,
 	PROG_2,
-	PROG_3
+	PROG_3,
 } PROGRAM_STATE;
 
 // set the slave select pin for the Servoshock.  Set jumper JP2 on the Shield to D10 if using digital output 10.
@@ -70,8 +70,12 @@ Servoshock Servoshock1(slaveSelect);  //create instance of Servoshock
 bool tpadPressLast = 0;
 
 
-PROGRAM_STATE currentProgram = NO_OVERRIDE; //this indicates which program to run.  default NO_OVERRIDE
+PROGRAM_STATE currentProgram = STANDBY; //this indicates which program to run.  default STANDBY
 uint32_t programTimer = 0;  //this keeps track of how many loops since the start of a program override we've gone though
+unsigned int LEDCounter = 0;//counter for manipulating the LED color
+unsigned char LEDRed = 255;
+unsigned char LEDGreen = 0;
+unsigned char LEDBlue = 0;
 
 
 void setup() {
@@ -151,17 +155,45 @@ void loop() {
 
 	Servoshock1.Update(); //send/receive data between servoshock
 
+	////////////////////////THESE OVERRIDES ARE ALWAYS ON////////////////////////
+	//Set rumble
+	Servoshock1.outPacket.overrideLED = 1;
+	Servoshock1.outPacket.overrideRumbleH = 1;
+	Servoshock1.outPacket.overrideRumbleL = 1;
+	Servoshock1.outPacket.rumbleH = Servoshock1.inPacket.rTriggerAnalog;
+	Servoshock1.outPacket.rumbleL = Servoshock1.inPacket.lTriggerAnalog;
+
+	//Set LED
+	Servoshock1.outPacket.overrideLED = 1;
+	Servoshock1.SetLED(LEDRed, LEDGreen, LEDBlue, 0, 0);
+	if (LEDCounter < 255) {
+		LEDRed--;
+		LEDGreen++;
+	} else if (LEDCounter < 510) {
+		LEDGreen--;
+		LEDBlue++;
+	} else if (LEDCounter < 765) {
+		LEDBlue--;
+		LEDRed++;
+	}
+	if (LEDCounter < 768) {
+		LEDCounter++;
+	} else {
+		LEDCounter = 0;
+	}
+
+	////////////////////////ARDUINO PROGRAMS////////////////////////
 	switch (currentProgram) {
-		case NO_OVERRIDE:
-			programTimer = 0;
-			RelinquishControl();
+		case STANDBY:
 			//conditions that will change the state
 			if (tpadPressLast == 0 && Servoshock1.inPacket.tpadPress == 1)
 			{
 				Serial.print("PROG1\n\r");
 				currentProgram = PROG_1;
+				programTimer = 0;
 
 			}
+
 			break;
 
 		case PROG_1:
@@ -170,8 +202,10 @@ void loop() {
 			if ((tpadPressLast == 0 && Servoshock1.inPacket.tpadPress == 1) ||  //if the tpad is pressed again...
 				 programTimer == 800) 											//or if the timer expires...
 			{
-				currentProgram = NO_OVERRIDE; //exit program
-				Serial.print("NO_OVERRIDE\n\r");
+				RelinquishControl();
+				programTimer = 0;
+				currentProgram = STANDBY; //exit program
+				Serial.print("STANDBY\n\r");
 				break;
 			}
 
@@ -187,11 +221,10 @@ void loop() {
 			ServoInterpolate(&Servoshock1.outPacket.lStickY_uS, programTimer, 500, 2000, 600, 1000);
 			ServoInterpolate(&Servoshock1.outPacket.rStickX_uS, programTimer, 600, 2000, 700, 1000);
 			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 700, 2000, 800, 1000);
-			
 			break;
 
 		default:
-			currentProgram = NO_OVERRIDE;
+			currentProgram = STANDBY;
 			break;
 	}
 
