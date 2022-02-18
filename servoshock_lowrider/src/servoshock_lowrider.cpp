@@ -213,15 +213,17 @@ void loop() {
 			Servoshock1.outPacket.overrideLStickY = 1;
 			Servoshock1.outPacket.overrideRStickX = 1;
 			Servoshock1.outPacket.overrideRStickY = 1;
-			ServoInterpolate(&Servoshock1.outPacket.lStickX_uS, programTimer,   0, 700, 800, 700);  //need to pass by reference (use the '&' before the variable)
-			ServoInterpolate(&Servoshock1.outPacket.lStickY_uS, programTimer, 100, 1000, 200, 2000);
-			ServoInterpolate(&Servoshock1.outPacket.rStickX_uS, programTimer, 200, 1000, 300, 2000);
-			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 300, 1000, 400, 2000);
-			ServoInterpolate(&Servoshock1.outPacket.lStickX_uS, programTimer, 400, 2000, 500, 1000);
-			ServoInterpolate(&Servoshock1.outPacket.lStickY_uS, programTimer, 500, 2000, 600, 1000);
-			ServoInterpolate(&Servoshock1.outPacket.rStickX_uS, programTimer, 600, 2000, 700, 1000);
-			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 700, 2000, 800, 1000);
+			ServoInterpolate(&Servoshock1.outPacket.lStickX_uS, programTimer, 0, 1500, 100, 590);  //need to pass by reference (use the '&' before the variable)
+			ServoInterpolate(&Servoshock1.outPacket.lStickY_uS, programTimer, 50, 800, 150, 1800);
+			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 175, 1900, 186, 1300);
+		    ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 200, 1900, 222, 1300);
+            ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 229, 1900, 239, 1300);
+            ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 244, 1900, 255, 1300); 
+			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 256, 1900, 262, 1300);
+			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 270, 1900, 282, 1300);
+
 			break;
+
 
 		default:
 			currentProgram = STANDBY;
