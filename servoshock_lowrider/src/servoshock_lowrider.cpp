@@ -220,7 +220,7 @@ void loop() {
             ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 229, 1900, 239, 1300);
             ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 244, 1900, 255, 1300); 
 			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 256, 1900, 262, 1300);
-			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 270, 1900, 282, 1300);
+			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 271, 1900, 282, 1300);
 
 			break;
 
