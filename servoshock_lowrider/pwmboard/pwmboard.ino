@@ -53,7 +53,7 @@ void setup() {
   // if you want to really speed stuff up, you can go into 'fast 400khz I2C' mode
   // some i2c devices dont like this so much so if you're sharing the bus, watch
   // out for this!
-  Wire.setClock(400000);
+  Wire.setClock(100000);
 }
 
 void loop() {
