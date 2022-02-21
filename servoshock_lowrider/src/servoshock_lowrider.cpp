@@ -52,7 +52,8 @@ The basic structure of the program is:
 #include <stdint.h>
 #include "servoshock_PS4.h"
 #include "print_serial.h"
-
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
 
 //add new program to list here, can do a fine/replace to rename
 typedef enum {
@@ -77,17 +78,10 @@ unsigned char LEDRed = 255;
 unsigned char LEDGreen = 0;
 unsigned char LEDBlue = 0;
 
+// called this way, it uses the default address 0x40
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 
-void setup() {
-	//initialize SPI:
-  SPI.begin();
-	digitalWrite(slaveSelect, HIGH);
-	SPI.setDataMode(SPI_MODE1);
-	SPI.setClockDivider(SPI_CLOCK_DIV128);
-	SPI.setBitOrder(MSBFIRST);
 
-	Serial.begin(115200);  //initialize serial monitor
-}
 
 void RelinquishControl(void)
 {
@@ -148,6 +142,42 @@ int ServoInterpolate( uint16_t *channel, uint32_t currentTime, uint32_t time1, u
 	return 1; //success
 }
 
+/***Interpolate the Adafruit PCA 9685 PWM board pulse width, given the two keyframes.  Return 0 if out of bounds.
+ *  inputs:
+ * 		pwm_object: Adafruit_PWMServoDriver object
+ * 		channel: channel number, 0-15
+ * 		currentTime: current value of program timer counter
+ * 		time1: PWM  start time
+ * 		pulseWidth1: pulse width at start time, 0-4095
+ * 		time2: PWM end time
+ * 		pulseWidth2: pulse width at end time, 0-4095
+ ***/
+int PwmInterpolate(Adafruit_PWMServoDriver *pwm_object, uint8_t channel, uint32_t currentTime, uint32_t time1, uint16_t pulseWidth1, uint32_t time2, uint16_t pulseWidth2 ) {
+	if (currentTime < time1 || currentTime > time2 || time1 > time2)
+	{
+		return 0; //return 0 if time is out of bounds
+	}
+	//if not out of bounds, interpolate and write channel PWM register
+	pwm_object->setPin(channel, (pulseWidth1*(time2-currentTime) + pulseWidth2*(currentTime-time1))/(time2-time1) );
+	return 1; //success
+}
+
+
+void setup() {
+	//initialize SPI:
+  	SPI.begin();
+	digitalWrite(slaveSelect, HIGH);
+	SPI.setDataMode(SPI_MODE1);
+	SPI.setClockDivider(SPI_CLOCK_DIV128);
+	SPI.setBitOrder(MSBFIRST);
+
+	Serial.begin(115200);  //initialize serial monitor
+
+	pwm.begin(); //Initialize PWM board
+	pwm.setOscillatorFrequency(27000000);
+	pwm.setPWMFreq(1600);  // This is the maximum PWM frequency
+	Wire.setClock(100000);
+}
 void loop() {
 	
 	//record variables we need to use to detect button state changes
@@ -221,6 +251,12 @@ void loop() {
             ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 244, 1900, 255, 1300); 
 			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 256, 1900, 262, 1300);
 			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 271, 1900, 282, 1300);
+
+			for (int i=0;i<16;i++){
+				PwmInterpolate(&pwm, programTimer, i, i*20, 0, (i+2)*20, 4095); //ramp up LEDs
+				PwmInterpolate(&pwm, programTimer, i, (i+3)*20, 4095, (i+5)*20, 0); //ramp down LEDs
+			}
+
 
 			break;
 
