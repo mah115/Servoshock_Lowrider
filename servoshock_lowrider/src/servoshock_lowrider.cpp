@@ -231,10 +231,11 @@ void loop() {
 			break;
 
 		case PROG_1:
+			const uint32_t PROG_1_TIME_SCALE = 5;
 			Serial.println(programTimer,DEC);
 			//conditions that will change the state, e.g. button press or timer
 			if ((tpadPressLast == 0 && Servoshock1.inPacket.tpadPress == 1) ||  //if the tpad is pressed again...
-				 programTimer == 800) 											//or if the timer expires...
+				 programTimer == 80*PROG_1_TIME_SCALE) 	//or if the timer expires...
 			{
 				RelinquishControl();
 				programTimer = 0;
@@ -247,18 +248,18 @@ void loop() {
 			Servoshock1.outPacket.overrideLStickY = 1;
 			Servoshock1.outPacket.overrideRStickX = 1;
 			Servoshock1.outPacket.overrideRStickY = 1;
-			ServoInterpolate(&Servoshock1.outPacket.lStickX_uS, programTimer, 0, 1500, 100, 590);  //need to pass by reference (use the '&' before the variable)
-			ServoInterpolate(&Servoshock1.outPacket.lStickY_uS, programTimer, 50, 800, 150, 1800);
-			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 175, 1700, 186, 1300);
-		    ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 200, 1700, 222, 1300);
-            ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 229, 1700, 239, 1300);
-            ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 244, 1700, 255, 1300); 
-			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 256, 1700, 262, 1300);
-			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 271, 1700, 282, 1300);
+			ServoInterpolate(&Servoshock1.outPacket.lStickX_uS, programTimer, 0*PROG_1_TIME_SCALE, 1500, 10*PROG_1_TIME_SCALE, 590);  //need to pass by reference (use the '&' before the variable)
+			ServoInterpolate(&Servoshock1.outPacket.lStickY_uS, programTimer, 5*PROG_1_TIME_SCALE, 800, 15*PROG_1_TIME_SCALE, 1800);
+			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 17*PROG_1_TIME_SCALE, 1700, 19*PROG_1_TIME_SCALE, 1300);
+		    ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 20*PROG_1_TIME_SCALE, 1700, 22*PROG_1_TIME_SCALE, 1300);
+            ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 23*PROG_1_TIME_SCALE, 1700, 24*PROG_1_TIME_SCALE, 1300);
+            ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 24*PROG_1_TIME_SCALE, 1700, 25*PROG_1_TIME_SCALE, 1300); 
+			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 25*PROG_1_TIME_SCALE, 1700, 26*PROG_1_TIME_SCALE, 1300);
+			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 27*PROG_1_TIME_SCALE, 1700, 28*PROG_1_TIME_SCALE, 1300);
 
 			for (int i=0;i<16;i++){
-				PwmInterpolate(&pwm, i, programTimer, 0, 0, 400, 4095); //ramp up LEDs
-				PwmInterpolate(&pwm, i, programTimer, 400, 4095, 800, 0); //ramp down LEDs
+				PwmInterpolate(&pwm, i, programTimer, 0*PROG_1_TIME_SCALE, 0, 40*PROG_1_TIME_SCALE, 4095); //ramp up LEDs
+				PwmInterpolate(&pwm, i, programTimer, 40*PROG_1_TIME_SCALE, 4095, 80*PROG_1_TIME_SCALE, 0); //ramp down LEDs
 			}
 
 
@@ -271,6 +272,6 @@ void loop() {
 	}
 
 	programTimer ++;
-	delay(1);
+	delay(10);
 }
 
