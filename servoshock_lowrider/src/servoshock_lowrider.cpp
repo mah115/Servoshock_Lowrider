@@ -177,6 +177,7 @@ void setup() {
 	pwm.setOscillatorFrequency(27000000);
 	pwm.setPWMFreq(1600);  // This is the maximum PWM frequency
 	Wire.setClock(100000);
+
 }
 void loop() {
 	
@@ -215,6 +216,9 @@ void loop() {
 	////////////////////////ARDUINO PROGRAMS////////////////////////
 	switch (currentProgram) {
 		case STANDBY:
+			for (int i=0;i<16;i++){
+				pwm.setPin(i,2048); //ramp up LEDs
+			}
 			//conditions that will change the state
 			if (tpadPressLast == 0 && Servoshock1.inPacket.tpadPress == 1)
 			{
@@ -245,16 +249,16 @@ void loop() {
 			Servoshock1.outPacket.overrideRStickY = 1;
 			ServoInterpolate(&Servoshock1.outPacket.lStickX_uS, programTimer, 0, 1500, 100, 590);  //need to pass by reference (use the '&' before the variable)
 			ServoInterpolate(&Servoshock1.outPacket.lStickY_uS, programTimer, 50, 800, 150, 1800);
-			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 175, 1900, 186, 1300);
-		    ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 200, 1900, 222, 1300);
-            ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 229, 1900, 239, 1300);
-            ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 244, 1900, 255, 1300); 
-			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 256, 1900, 262, 1300);
-			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 271, 1900, 282, 1300);
+			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 175, 1700, 186, 1300);
+		    ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 200, 1700, 222, 1300);
+            ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 229, 1700, 239, 1300);
+            ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 244, 1700, 255, 1300); 
+			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 256, 1700, 262, 1300);
+			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 271, 1700, 282, 1300);
 
 			for (int i=0;i<16;i++){
-				PwmInterpolate(&pwm, programTimer, i, i*20, 0, (i+2)*20, 4095); //ramp up LEDs
-				PwmInterpolate(&pwm, programTimer, i, (i+3)*20, 4095, (i+5)*20, 0); //ramp down LEDs
+				PwmInterpolate(&pwm, i, programTimer, 0, 0, 400, 4095); //ramp up LEDs
+				PwmInterpolate(&pwm, i, programTimer, 400, 4095, 800, 0); //ramp down LEDs
 			}
 
 
@@ -267,6 +271,6 @@ void loop() {
 	}
 
 	programTimer ++;
-	delay(10);
+	delay(1);
 }
 
