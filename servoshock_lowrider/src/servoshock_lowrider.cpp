@@ -175,11 +175,11 @@ void setup() {
 
 	pwm.begin(); //Initialize PWM board
 	pwm.setOscillatorFrequency(27000000);
-`		pwm.setPWMFreq(1600);  // This is the maximum PWM frequency
+		pwm.setPWMFreq(1600);  // This is the maximum PWM frequency
 	Wire.setClock(100000);
 
 }
-void loop() 
+void loop() {
 	for (int i=0;i<16;i++){
       pwm.setPin(i,4095);
 
