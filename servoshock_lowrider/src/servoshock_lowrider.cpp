@@ -179,7 +179,7 @@ void setup() {
 	Wire.setClock(100000);
 
 }
-void loop() {
+void loop() 
 	for (int i=0;i<16;i++){
       pwm.setPin(i,4095);
 
