@@ -175,12 +175,14 @@ void setup() {
 
 	pwm.begin(); //Initialize PWM board
 	pwm.setOscillatorFrequency(27000000);
-	pwm.setPWMFreq(1600);  // This is the maximum PWM frequency
+`		pwm.setPWMFreq(1600);  // This is the maximum PWM frequency
 	Wire.setClock(100000);
 
 }
 void loop() {
-	
+	for (int i=0;i<16;i++){
+      pwm.setPin(i,4095);
+
 	//record variables we need to use to detect button state changes
 	tpadPressLast = Servoshock1.inPacket.tpadPress;
 
@@ -254,11 +256,10 @@ void loop() {
 		    ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 20*PROG_1_TIME_SCALE, 1700, 22*PROG_1_TIME_SCALE, 1300);
             ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 23*PROG_1_TIME_SCALE, 1700, 24*PROG_1_TIME_SCALE, 1300);
             ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 24*PROG_1_TIME_SCALE, 1700, 25*PROG_1_TIME_SCALE, 1300); 
-			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 25*PROG_1_TIME_SCALE, 1700, 26*PROG_1_TIME_SCALE, 1300);
-			ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 27*PROG_1_TIME_SCALE, 1700, 28*PROG_1_TIME_SCALE, 1300);
+			
 
 			for (int i=0;i<16;i++){
-				PwmInterpolate(&pwm, i, programTimer, 0*PROG_1_TIME_SCALE, 0, 10*PROG_1_TIME_SCALE, 4095); //ramp up LEDs
+				ServoInterpolate(&Servoshock1.outPacket.rStickY_uS, programTimer, 27*PROG_1_TIME_SCALE, 1700, 28*PROG_1_TIME_SCALE, 1300);PwmInterpolate(&pwm, i, programTimer, 0*PROG_1_TIME_SCALE, 0, 10*PROG_1_TIME_SCALE, 4095); //ramp up LEDs
 				PwmInterpolate(&pwm, i, programTimer, 10*PROG_1_TIME_SCALE, 4095, 20*PROG_1_TIME_SCALE, 0); //ramp down LEDs
 				PwmInterpolate(&pwm, i, programTimer, 20*PROG_1_TIME_SCALE, 0, 30*PROG_1_TIME_SCALE, 4095); //ramp up LEDs
 				PwmInterpolate(&pwm, i, programTimer, 30*PROG_1_TIME_SCALE, 4095, 40*PROG_1_TIME_SCALE, 0); //ramp down LEDs
